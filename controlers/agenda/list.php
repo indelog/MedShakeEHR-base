@@ -49,13 +49,13 @@ if (!empty($pratID) and !empty($startDate) and !empty($endDate)) {
 	$type_rdvs = $msAgenda->getRdvTypes();
 	$rdvs = $msAgenda->getEvents();
 	foreach($rdvs as $r) {
-		$dateTime = new DateTime($r['start']);
+		$dateTime = DateTime::createFromFormat('Y-m-d H:i:s', $r['start']);
 		$day = $dateTime->format('d/m/Y');
 		// Ignore fermée
 		if (empty($type_rdvs[$r['type']]['descriptif'])) continue;
 		if (empty($list_rdv[$day])) $list_rdv[$day] = array();
 		$list_rdv[$day][] = array(
-			'h_start'=>$dateTime->format('h:m'),
+			'h_start'=>$dateTime->format('H:i'),
 			'duree'=>$type_rdvs[$r['type']]['duree'],
 			'consult'=>$type_rdvs[$r['type']]['descriptif'],
 			'color'=>$type_rdvs[$r['type']]['backgroundColor'],
