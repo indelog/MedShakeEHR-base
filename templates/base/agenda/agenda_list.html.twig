@@ -1,0 +1,111 @@
+{% extends "page.html.twig" %}
+{% block title %}Liste de rendez-vous {% if page.search.pratID is not empty %}du Dr {{ page.agendaUsers[page.search.pratID] }}{% endif %}{% endblock %}
+
+{% block cssEmbed %}
+  @media print {
+    @page { size: landscape; }
+    #search-form {display: none;}
+  }
+{% endblock %}
+
+{% block head %}
+    {{ parent() }}
+{% endblock %}
+
+{% block body %}
+
+  <div id="search-form" class="card card-body bg-light my-4">
+    <div class="row justify-content-between">
+      <div class="col-auto"><h1>Rechercher la liste des rendez-vous</h1></div>
+      {% if page.list_rdv|length > 0 %}
+        <div class="col-auto"><button class="btn btn-secondary" type="button" onclick="window.print()">Imprimer</button></div>
+      {% endif %}
+    </div>
+    <form class="row" method="post" action="{{ config.protocol }}{{ config.host }}{{ config.urlHostSuffixe }}/agenda/list/">
+      <div class="col-4">
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text">Paticien</span>
+          </div>
+          <select class="custom-select" name="pratID" id="search_pratId">
+            {% for id, name in page.agendaUsers %}
+              <option value="{{ id }}" {% if page.search.pratID == id %}selected{% endif %}>{{ name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <div class="col-3">
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text">Début</span>
+          </div>
+          <input class="form-control" type="date" name="startDate" id="search_startDate" value="{{ page.search.startDate }}">
+        </div>
+      </div>
+
+      <div class="col-3">
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text">Fin</span>
+          </div>
+          <input class="form-control" type="date" name="endDate" id="search_endDate" value="{{ page.search.endDate }}">
+        </div>
+      </div>
+      
+      <div class="col-2 text-right">
+        <button class="btn btn-primary" type="submit">Obtenir</button>
+      </div>
+
+    </form>
+  </div>
+
+  {% if page.search.pratID is empty %}
+  <div class="alert alert-warning" role="alert">Aucun praticien sélectionné</div>
+  {% endif %}
+
+  {% if page.search.startDate is empty %}
+  <div class="alert alert-warning" role="alert">Veuillez fournir une date de début</div>
+  {% endif %}
+
+  {% if page.search.endDate is empty %}
+  <div class="alert alert-warning" role="alert">Veuillez fournir une date de fin</div>
+  {% endif %}
+
+  <div id="paper-title">
+    <h1>Rendez-vous du Dr {{ page.agendaUsers[page.search.pratID] }}</h1>
+  </div>
+
+  {% for date,rdvs in page.list_rdv %}
+    <table class="table table-sm table-striped mt-4">
+      <thead>
+        <tr><th colspan="4"><h2>Pour le {{ date }}</h2></td></th>
+        <tr>
+          <th scope="col">Consultation</th>
+          <th scope="col">Heure</th>
+          <th scope="col">Durée</th>
+          <th scope="col">Patient</th>
+        </tr>
+      </thead>
+
+      <tbody>
+      {% for rdv in rdvs %}
+        <tr scope="row">
+          <td><i class="fas fa-circle mr-1" {% if rdv.color is not empty %}style="color: {{rdv.color}}"{% endif %}></i>{{ rdv.consult }}</td>
+          <td>{{ rdv.h_start }}</td>
+          <td>{{ rdv.duree }} min</td>
+          <td>
+            <div>{{ rdv.title }}</div>
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+
+    </table>
+  {% endfor %}
+  {% if page.list_rdv|length < 1 %}
+    <div class="alert alert-info">Aucun rendez-vous trouvé</div>
+  {% endif %}
+    
+{% endblock %}
+

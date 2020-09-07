@@ -251,6 +251,11 @@
               {% if config.utiliserLap == 'true' or config.VoirRouletteObstetricale == 'true' %}
                 <h6 class="dropdown-header">Outils</h6>
               {% endif %}
+
+              <a class="dropdown-item" href="{{ config.protocol }}{{ config.host }}{{ config.urlHostSuffixe }}/agenda/list/">
+                  <i class="fas fa-calendar-alt fa-fw text-muted mr-1"></i>
+                  Liste rdv
+              </a>
               {% if config.utiliserLap == 'true' %}
                 <a class="dropdown-item" href="{{ config.protocol }}{{ config.host }}{{ config.urlHostSuffixe }}/outils/lap/">
                   <i class="fas fa-pills fa-fw text-muted mr-1"></i>
