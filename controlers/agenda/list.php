@@ -51,6 +51,8 @@ if (!empty($pratID) and !empty($startDate) and !empty($endDate)) {
 	foreach($rdvs as $r) {
 		$dateTime = new DateTime($r['start']);
 		$day = $dateTime->format('d/m/Y');
+		// Ignore fermée
+		if (empty($type_rdvs[$r['type']]['descriptif'])) continue;
 		if (empty($list_rdv[$day])) $list_rdv[$day] = array();
 		$list_rdv[$day][] = array(
 			'h_start'=>$dateTime->format('h:m'),
